@@ -1,6 +1,6 @@
 #include "mpi/korotin_e_scatter/include/ops_mpi.hpp"
 
-#include<mpi.h>
+#include <mpi.h>
 
 #include <algorithm>
 #include <cmath>

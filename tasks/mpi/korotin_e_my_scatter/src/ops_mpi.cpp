@@ -12,8 +12,8 @@ using namespace std::chrono_literals;
 
 int korotin_e_my_scatter_mpi::TestMPITaskMyParallel::MPI_My_Scatter(void *send_buf, int sendcount,
                                                                     MPI_Datatype sendtype, void *recv_buf,
-                                                                    int recvcount, MPI_Datatype recvtype,
-                                                                    int root, MPI_Comm comm) {
+                                                                    int recvcount, MPI_Datatype recvtype, int root,
+                                                                    MPI_Comm comm) {
   int worldsize;
   int size;
   int rank;
@@ -53,8 +53,7 @@ int korotin_e_my_scatter_mpi::TestMPITaskMyParallel::MPI_My_Scatter(void *send_b
 
   if (rank == root) {
     if (root != 0) {
-      if (root != 1) 
-        MPI_Send(sendbuf + sendcount * type_size, ((worldsize - 1) / 2) * sendcount, sendtype, 1, 0, comm);
+      if (root != 1) MPI_Send(sendbuf + sendcount * type_size, ((worldsize - 1) / 2) * sendcount, sendtype, 1, 0, comm);
       if (root != worldsize - worldsize / 2)
         MPI_Send(sendbuf + (worldsize - worldsize / 2) * sendcount * type_size, (worldsize / 2) * sendcount, sendtype,
                  worldsize - (worldsize / 2), 0, comm);
@@ -69,7 +68,7 @@ int korotin_e_my_scatter_mpi::TestMPITaskMyParallel::MPI_My_Scatter(void *send_b
 
     std::copy(sendbuf + rank * sendcount * type_size, sendbuf + (rank + 1) * sendcount * type_size, recvbuf);
   } else if (rank != 0) {
-    char* tmpbuf = new char [size * recvcount * type_size];
+    char* tmpbuf = new char[size * recvcount * type_size];
 
     if (parent == 0) parent = root;
     MPI_Recv(tmpbuf, recvcount * size, recvtype, parent, 0, comm, MPI_STATUS_IGNORE);
