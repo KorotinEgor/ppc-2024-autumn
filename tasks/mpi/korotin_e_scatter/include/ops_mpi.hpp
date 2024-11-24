@@ -29,7 +29,8 @@ class TestMPITaskSequential : public ppc::core::Task {
 
 class TestMPITaskParallel : public ppc::core::Task {
  public:
-  explicit TestMPITaskParallel(std::shared_ptr<ppc::core::TaskData> taskData_, int root_) : Task(std::move(taskData_)), root(root_) {}
+  explicit TestMPITaskParallel(std::shared_ptr<ppc::core::TaskData> taskData_, int root_)
+      : Task(std::move(taskData_)), root(root_) {}
   bool pre_processing() override;
   bool validation() override;
   bool run() override;

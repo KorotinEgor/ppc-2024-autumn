@@ -1,17 +1,19 @@
 #include "mpi/korotin_e_my_scatter/include/ops_mpi.hpp"
 
+#include <mpi.h>
+
 #include <algorithm>
 #include <cmath>
 #include <functional>
-#include <mpi.h>
 #include <thread>
 #include <vector>
 
 using namespace std::chrono_literals;
 
-int korotin_e_my_scatter_mpi::TestMPITaskMyParallel::MPI_My_Scatter(void *send_buf, int sendcount, MPI_Datatype sendtype,
-                  void *recv_buf, int recvcount, MPI_Datatype recvtype, int root,
-                  MPI_Comm world) {
+int korotin_e_my_scatter_mpi::TestMPITaskMyParallel::MPI_My_Scatter(void *send_buf, int sendcount,
+                                                                    MPI_Datatype sendtype, void *recv_buf,
+                                                                    int recvcount, MPI_Datatype recvtype,
+                                                                    int root, MPI_Comm comm) {
   int worldsize;
   int size;
   int rank;
@@ -24,8 +26,8 @@ int korotin_e_my_scatter_mpi::TestMPITaskMyParallel::MPI_My_Scatter(void *send_b
   char* sendbuf = reinterpret_cast<char*>(send_buf);
   char* recvbuf = reinterpret_cast<char*>(recv_buf);
 
-  MPI_Comm_rank(world, &rank);
-  MPI_Comm_size(world, &worldsize);
+  MPI_Comm_rank(comm, &rank);
+  MPI_Comm_size(comm, &worldsize);
   size = worldsize;
   weight = worldsize;
 
@@ -51,47 +53,38 @@ int korotin_e_my_scatter_mpi::TestMPITaskMyParallel::MPI_My_Scatter(void *send_b
 
   if (rank == root) {
     if (root != 0) {
-       if (root != 1)
-        MPI_Send(sendbuf + sendcount * type_size, ((worldsize - 1) / 2) * sendcount,
-                 sendtype, 1, 0, world);
+      if (root != 1) 
+        MPI_Send(sendbuf + sendcount * type_size, ((worldsize - 1) / 2) * sendcount, sendtype, 1, 0, comm);
       if (root != worldsize - worldsize / 2)
-        MPI_Send(sendbuf + (worldsize - worldsize / 2) * sendcount * type_size,
-                 (worldsize / 2) * sendcount, sendtype,
-                 worldsize - (worldsize / 2), 0, world);
-      MPI_Send(sendbuf, sendcount, sendtype, 0, 0, world);
+        MPI_Send(sendbuf + (worldsize - worldsize / 2) * sendcount * type_size, (worldsize / 2) * sendcount, sendtype,
+                 worldsize - (worldsize / 2), 0, comm);
+      MPI_Send(sendbuf, sendcount, sendtype, 0, 0, comm);
     }
     if (left > -1) {
-      MPI_Send(sendbuf + left * sendcount * type_size, ((size - 1) / 2) * sendcount,
-               sendtype, left, 0, world);
+      MPI_Send(sendbuf + left * sendcount * type_size, ((size - 1) / 2) * sendcount, sendtype, left, 0, comm);
     }
     if (right > -1) {
-      MPI_Send(sendbuf + right * sendcount * type_size, (size / 2) * sendcount, sendtype,
-               right, 0, world);
+      MPI_Send(sendbuf + right * sendcount * type_size, (size / 2) * sendcount, sendtype, right, 0, comm);
     }
 
-    std::copy(sendbuf + rank * sendcount * type_size, sendbuf + (rank + 1) * sendcount * type_size,
-              recvbuf);
+    std::copy(sendbuf + rank * sendcount * type_size, sendbuf + (rank + 1) * sendcount * type_size, recvbuf);
   } else if (rank != 0) {
-    char *tmpbuf = new char [size * recvcount * type_size];
+    char* tmpbuf = new char [size * recvcount * type_size];
 
-    if (parent == 0)
-      parent = root;
-    MPI_Recv(tmpbuf, recvcount * size, recvtype, parent, 0, world,
-             MPI_STATUS_IGNORE);
+    if (parent == 0) parent = root;
+    MPI_Recv(tmpbuf, recvcount * size, recvtype, parent, 0, comm, MPI_STATUS_IGNORE);
 
     if (left > -1 && left != root) {
-      MPI_Send(tmpbuf + sendcount * type_size, ((size - 1) / 2) * sendcount, sendtype, left,
-               0, world);
+      MPI_Send(tmpbuf + sendcount * type_size, ((size - 1) / 2) * sendcount, sendtype, left, 0, comm);
     }
     if (right > -1 && right != root) {
-      MPI_Send(tmpbuf + (right - rank) * sendcount * type_size, (size / 2) * sendcount,
-               sendtype, right, 0, world);
+      MPI_Send(tmpbuf + (right - rank) * sendcount * type_size, (size / 2) * sendcount, sendtype, right, 0, comm);
     }
 
     std::copy(tmpbuf, tmpbuf + sendcount * type_size, recvbuf);
     delete[] tmpbuf;
   } else
-    MPI_Recv(recvbuf, recvcount, recvtype, root, 0, world, MPI_STATUS_IGNORE);
+    MPI_Recv(recvbuf, recvcount, recvtype, root, 0, comm, MPI_STATUS_IGNORE);
   return MPI_SUCCESS;
 }
 
