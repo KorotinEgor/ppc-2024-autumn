@@ -10,8 +10,8 @@
 
 using namespace std::chrono_literals;
 
-int korotin_e_my_scatter_mpi::TestMPITaskMyParallel::MPI_My_Scatter(void *send_buf, int sendcount,
-                                                                    MPI_Datatype sendtype, void *recv_buf,
+int korotin_e_my_scatter_mpi::TestMPITaskMyParallel::MPI_My_Scatter(void* send_buf, int sendcount,
+                                                                    MPI_Datatype sendtype, void* recv_buf,
                                                                     int recvcount, MPI_Datatype recvtype, int src,
                                                                     MPI_Comm comm) {
   int worldsize;
