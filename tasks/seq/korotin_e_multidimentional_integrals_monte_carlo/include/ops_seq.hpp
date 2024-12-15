@@ -29,8 +29,6 @@ class TestTaskSequential : public ppc::core::Task {
   double variance{};
   double M{};
   double (*f)(double*) = nullptr;
-  std::uniform_real_distribution<double>* rng_bord;
-  double* mas;
 };
 
 }  // namespace korotin_e_multidimentional_integrals_monte_carlo_seq

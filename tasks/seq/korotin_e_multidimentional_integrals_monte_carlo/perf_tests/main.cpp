@@ -2,22 +2,19 @@
 #include <gtest/gtest.h>
 
 #include <vector>
-#include <iostream>
 
 #include "core/perf/include/perf.hpp"
 #include "seq/korotin_e_multidimentional_integrals_monte_carlo/include/ops_seq.hpp"
 
 namespace korotin_e_multidimentional_integrals_monte_carlo_seq {
 
-double test_func(double* x) {
-  return x[0] * x[0] + x[1] * x[1] + x[2] * x[2];
-}
+double test_func(double *x) { return x[0] * x[0] + x[1] * x[1] + x[2] * x[2]; }
 
-} // namespace korotin_e_multidimentional_integrals_monte_carlo_seq
+}  // namespace korotin_e_multidimentional_integrals_monte_carlo_seq
 
 TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_pipeline_run) {
   std::vector<std::pair<double, double>> borders(3);
-  std::vector<double> res(1,0);
+  std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
   double ref = 32.0;
 
@@ -33,7 +30,8 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_pipeline_run) {
   taskDataSeq->outputs_count.emplace_back(res.size());
 
   // Create Task
-  auto testTaskSequential = std::make_shared<korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential>(taskDataSeq);
+  auto testTaskSequential =
+      std::make_shared<korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential>(taskDataSeq);
   testTaskSequential->set_func(korotin_e_multidimentional_integrals_monte_carlo_seq::test_func);
 
   // Create Perf attributes
@@ -57,13 +55,12 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_pipeline_run) {
   double err = testTaskSequential->possible_error();
   bool ans = (std::abs(res[0] - ref) < err);
 
-  std::cout << "right err = " << err << "\n";
   ASSERT_EQ(ans, true);
 }
 
 TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_task_run) {
   std::vector<std::pair<double, double>> borders(3);
-  std::vector<double> res(1,0);
+  std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
   double ref = 32.0;
 
@@ -79,7 +76,8 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_task_run) {
   taskDataSeq->outputs_count.emplace_back(res.size());
 
   // Create Task
-  auto testTaskSequential = std::make_shared<korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential>(taskDataSeq);
+  auto testTaskSequential =
+      std::make_shared<korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential>(taskDataSeq);
   testTaskSequential->set_func(korotin_e_multidimentional_integrals_monte_carlo_seq::test_func);
 
   // Create Perf attributes

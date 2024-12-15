@@ -33,8 +33,8 @@ bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::v
 
 bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::run() {
   internal_order_test();
-  std::uniform_real_distribution<double>* rng_bord = new std::uniform_real_distribution<double> [dim];
-  double* mas = new double [dim];
+  std::uniform_real_distribution<double>* rng_bord = new std::uniform_real_distribution<double>[dim];
+  double* mas = new double[dim];
 
   for (int i = 0; i < dim; i++) {
     if (input_[i].first > input_[i].second)
@@ -47,15 +47,13 @@ bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::r
   std::mt19937 gen(rd());
   rng = std::vector<double>(N);
   for (size_t i = 0; i < N; i++) {
-    for (int j = 0; j < dim; j++)
-      mas[j] = rng_bord[j](gen);
+    for (int j = 0; j < dim; j++) mas[j] = rng_bord[j](gen);
     rng[i] = f(mas) / N;
   }
   M = std::accumulate(rng.begin(), rng.end(), M);
 
   double volume = 1.0;
-  for (int i = 0; i< dim; i++)
-    volume*= (input_[i].second - input_[i].first);
+  for (int i = 0; i< dim; i++) volume*= (input_[i].second - input_[i].first);
   res = volume * M;
 
   delete[] mas;
@@ -72,8 +70,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::p
 
 double korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::possible_error() {
   double volume = 1.0;
-  for (int i = 0; i< dim; i++)
-    volume*= (input_[i].second - input_[i].first);
+  for (int i = 0; i< dim; i++) volume*= (input_[i].second - input_[i].first);
 
   if (variance < 0) {
     if (rng.size() == N) {
@@ -82,8 +79,8 @@ double korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential:
         rng[i] *= rng[i];
       }
       variance = std::accumulate(rng.begin(), rng.end(), M);
-    }
-    else return -1.0;
+    } else
+      return -1.0;
   }
   return 6 * std::abs(volume) * sqrt(variance);
 }

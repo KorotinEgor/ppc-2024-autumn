@@ -10,17 +10,14 @@
 
 namespace korotin_e_multidimentional_integrals_monte_carlo_mpi {
 
-double test_func(double* x) {
-  return x[0] * x[0] + x[1] * x[1] + x[2] * x[2];
+double test_func(double *x) { return x[0] * x[0] + x[1] * x[1] + x[2] * x[2]; }
 
-}
-
-double ref_integration(const std::vector<double>& left_border, const std::vector<double>& right_border) {
+double ref_integration(const std::vector<double> &left_border, const std::vector<double> &right_border) {
   double res = 0.0;
   for (size_t i = 0; i < left_border.size(); i++) {
     double tmp = right_border[i] * right_border[i] * right_border[i];
     tmp -= left_border[i] * left_border[i] * left_border[i];
-    tmp/=3;
+    tmp /= 3;
     for (size_t j = 0; j < left_border.size(); j++) {
       if (j == i) continue;
       tmp *= right_border[j] - left_border[j];
@@ -36,7 +33,7 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_monte_carlo) {
   boost::mpi::communicator world;
   std::vector<double> left_border(3);
   std::vector<double> right_border(3);
-  std::vector<double> res(1,0);
+  std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
 
   std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();

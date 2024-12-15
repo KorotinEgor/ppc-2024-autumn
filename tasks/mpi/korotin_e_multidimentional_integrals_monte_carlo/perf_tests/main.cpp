@@ -3,16 +3,13 @@
 
 #include <boost/mpi/timer.hpp>
 #include <vector>
-#include <iostream>
 
 #include "core/perf/include/perf.hpp"
 #include "mpi/korotin_e_multidimentional_integrals_monte_carlo/include/ops_mpi.hpp"
 
 namespace korotin_e_multidimentional_integrals_monte_carlo_mpi {
 
-double test_func(double* x) {
-  return x[0] * x[0] + x[1] * x[1] + x[2] * x[2];
-}
+double test_func(double *x) { return x[0] * x[0] + x[1] * x[1] + x[2] * x[2]; }
 
 }  // namespace korotin_e_multidimentional_integrals_monte_carlo_mpi
 
@@ -20,7 +17,7 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_pipeline_run) {
   boost::mpi::communicator world;
   std::vector<double> left_border(3);
   std::vector<double> right_border(3);
-  std::vector<double> res(1,0);
+  std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
 
   std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
@@ -38,7 +35,8 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_pipeline_run) {
     taskDataPar->outputs_count.emplace_back(res.size());
   }
 
-  auto testMpiTaskParallel = std::make_shared<korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel>(taskDataPar);
+  auto testMpiTaskParallel =
+      std::make_shared<korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel>(taskDataPar);
   testMpiTaskParallel->set_func(korotin_e_multidimentional_integrals_monte_carlo_mpi::test_func);
   ASSERT_EQ(testMpiTaskParallel->validation(), true);
   testMpiTaskParallel->pre_processing();
@@ -72,7 +70,7 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_task_run) {
   boost::mpi::communicator world;
   std::vector<double> left_border(3);
   std::vector<double> right_border(3);
-  std::vector<double> res(1,0);
+  std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
 
   std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
@@ -90,7 +88,8 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_task_run) {
     taskDataPar->outputs_count.emplace_back(res.size());
   }
 
-  auto testMpiTaskParallel = std::make_shared<korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel>(taskDataPar);
+  auto testMpiTaskParallel =
+      std::make_shared<korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel>(taskDataPar);
   testMpiTaskParallel->set_func(korotin_e_multidimentional_integrals_monte_carlo_mpi::test_func);
   ASSERT_EQ(testMpiTaskParallel->validation(), true);
   testMpiTaskParallel->pre_processing();
