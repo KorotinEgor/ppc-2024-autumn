@@ -54,7 +54,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::r
   M = std::accumulate(rng.begin(), rng.end(), M);
 
   double volume = 1.0;
-  for (int i = 0; i< dim; i++) volume *= (input_[i].second - input_[i].first);
+  for (int i = 0; i < dim; i++) volume *= (input_[i].second - input_[i].first);
   res = volume * M;
 
   delete[] mas;
@@ -71,7 +71,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::p
 
 double korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::possible_error() {
   double volume = 1.0;
-  for (int i = 0; i< dim; i++) volume *= (input_[i].second - input_[i].first);
+  for (int i = 0; i < dim; i++) volume *= (input_[i].second - input_[i].first);
 
   if (variance < 0) {
     if (rng.size() == N) {

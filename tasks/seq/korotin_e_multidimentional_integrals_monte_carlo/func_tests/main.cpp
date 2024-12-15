@@ -38,7 +38,6 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_monte_carlo) {
   for (int i = 0; i < 3; i++) {
     borders[i].first = distrib(gen);
     borders[i].second = distrib(gen);
-    if (borders[i].first > borders[i].second) std::swap(borders[i].first, borders[i].second);
   }
 
   ref = korotin_e_multidimentional_integrals_monte_carlo_seq::ref_integration(borders);
