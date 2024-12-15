@@ -38,6 +38,9 @@ bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential
 bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential::run() {
   internal_order_test();
 
+  std::uniform_real_distribution<double>* rng_bord = new std::uniform_real_distribution<double>[dim];
+  double* mas = new double[dim];
+
   for (int i = 0; i < dim; i++) {
     if (input_[i].first > input_[i].second)
       rng_bord[i] = std::uniform_real_distribution<double>(input_[i].second, input_[i].first);
@@ -64,8 +67,6 @@ bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential
 bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential::post_processing() {
   internal_order_test();
   reinterpret_cast<double*>(taskData->outputs[0])[0] = res;
-  delete[] mas;
-  delete[] rng_bord;
   return true;
 }
 
