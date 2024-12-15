@@ -35,8 +35,6 @@ class TestMPITaskSequential : public ppc::core::Task {
   double variance{};
   double M{};
   double (*f)(double*) = nullptr;
-  std::uniform_real_distribution<double>* rng_bord;
-  double* mas;
 };
 
 class TestMPITaskParallel : public ppc::core::Task {
