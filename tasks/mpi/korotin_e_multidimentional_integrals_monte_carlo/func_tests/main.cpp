@@ -52,7 +52,7 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_monte_carlo) {
 
   if (world.rank() == 0) {
     std::vector<double> ref(1, 0);
-    std::vector<std::pair<double,double>> borders(3);
+    std::vector<std::pair<double, double>> borders(3);
 
     for (int i = 0; i < 3; i++) {
       borders[i].first = left_border[i];
