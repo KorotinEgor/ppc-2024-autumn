@@ -18,7 +18,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential
   input_ = std::vector<std::pair<double, double>>(dim);
   auto* start = reinterpret_cast<std::pair<double, double>*>(taskData->inputs[1]);
   std::copy(start, start + dim, input_.begin());
-  f = (reinterpret_cast<double (**)(double *)>(taskData->inputs[0]))[0];
+  f = (reinterpret_cast<double (**)(double*, int)>(taskData->inputs[0]))[0];
   // Init value for output
   res = 0.0;
   M = 0.0;
@@ -50,7 +50,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential
   rng = std::vector<double>(N);
   for (size_t i = 0; i < N; i++) {
     for (int j = 0; j < dim; j++) mas[j] = rng_bord[j](gen);
-    rng[i] = f(mas) / N;
+    rng[i] = f(mas, dim) / N;
   }
   M = std::accumulate(rng.begin(), rng.end(), M);
 
@@ -96,7 +96,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel::
     std::copy(start1, start1 + dim, input_left_.begin());
     std::copy(start2, start2 + dim, input_right_.begin());
   }
-  f = (reinterpret_cast<double (**)(double *)>(taskData->inputs[0])[0]);
+  f = (reinterpret_cast<double (**)(double*, int)>(taskData->inputs[0])[0]);
   res = 0.0;
   M = 0.0;
   local_M = 0.0;
@@ -108,7 +108,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel::
   internal_order_test();
   if (world.rank() == 0) {
     return taskData->outputs_count[0] == 1 && taskData->inputs_count[1] == taskData->inputs_count[2] &&
-           taskData->inputs_count[3] == 1 && taskData->inputs_count[0] == 1; 
+           taskData->inputs_count[3] == 1 && taskData->inputs_count[0] == 1;
   }
   return taskData->inputs_count[0] == 1;
 }
@@ -140,7 +140,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel::
   rng = std::vector<double>(n);
   for (size_t i = 0; i < n; i++) {
     for (int j = 0; j < dim; j++) mas[j] = rng_bord[j](gen);
-    rng[i] = f(mas) / N;
+    rng[i] = f(mas, dim) / N;
   }
   local_M = std::accumulate(rng.begin(), rng.end(), local_M);
 

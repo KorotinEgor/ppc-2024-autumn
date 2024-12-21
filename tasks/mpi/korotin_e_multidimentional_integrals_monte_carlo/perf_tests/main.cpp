@@ -9,7 +9,7 @@
 
 namespace korotin_e_multidimentional_integrals_monte_carlo_mpi {
 
-double test_func(double *x) { return x[0] * x[0] + x[1] * x[1] + x[2] * x[2]; }
+double test_func(double *x, int x_size) { return x[0] * x[0] + x[1] * x[1] + x[2] * x[2]; }
 
 }  // namespace korotin_e_multidimentional_integrals_monte_carlo_mpi
 
@@ -19,7 +19,7 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_pipeline_run) {
   std::vector<double> right_border(3);
   std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
-  std::vector<double (*)(double *)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_mpi::test_func);
+  std::vector<double (*)(double *, int)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_mpi::test_func);
 
   std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
 
@@ -74,7 +74,7 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_task_run) {
   std::vector<double> right_border(3);
   std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
-  std::vector<double (*)(double *)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_mpi::test_func);
+  std::vector<double (*)(double *, int)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_mpi::test_func);
 
   std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
 

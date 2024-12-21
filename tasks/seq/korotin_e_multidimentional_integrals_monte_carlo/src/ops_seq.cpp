@@ -14,7 +14,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::p
   N = (reinterpret_cast<size_t*>(taskData->inputs[2]))[0];
   input_ = std::vector<std::pair<double, double>>(dim);
   auto* start = reinterpret_cast<std::pair<double, double>*>(taskData->inputs[1]);
-  f = (reinterpret_cast<double (**)(double *)>(taskData->inputs[0]))[0];
+  f = (reinterpret_cast<double (**)(double*, int)>(taskData->inputs[0]))[0];
   std::copy(start, start + dim, input_.begin());
   // Init value for output
   res = 0.0;
@@ -26,7 +26,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::p
 bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::validation() {
   internal_order_test();
   // Check count elements of output
-  return taskData->outputs_count[0] == 1 && taskData->inputs_count[2] == 1 && taskData->inputs_count[0] == 1 ;
+  return taskData->outputs_count[0] == 1 && taskData->inputs_count[2] == 1 && taskData->inputs_count[0] == 1;
 }
 
 bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::run() {
@@ -46,7 +46,7 @@ bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::r
   rng = std::vector<double>(N);
   for (size_t i = 0; i < N; i++) {
     for (int j = 0; j < dim; j++) mas[j] = rng_bord[j](gen);
-    rng[i] = f(mas) / N;
+    rng[i] = f(mas, dim) / N;
   }
   M = std::accumulate(rng.begin(), rng.end(), M);
 

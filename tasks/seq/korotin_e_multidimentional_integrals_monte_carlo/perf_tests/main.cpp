@@ -8,7 +8,7 @@
 
 namespace korotin_e_multidimentional_integrals_monte_carlo_seq {
 
-double test_func(double *x) { return x[0] * x[0] + x[1] * x[1] + x[2] * x[2]; }
+double test_func(double *x, int x_size) { return x[0] * x[0] + x[1] * x[1] + x[2] * x[2]; }
 
 }  // namespace korotin_e_multidimentional_integrals_monte_carlo_seq
 
@@ -16,7 +16,7 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_pipeline_run) {
   std::vector<std::pair<double, double>> borders(3);
   std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
-  std::vector<double (*)(double *)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_seq::test_func);
+  std::vector<double (*)(double *, int)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_seq::test_func);
   double ref = 32.0;
 
   borders[0] = borders[1] = borders[2] = std::pair<double, double>(0.0, 2.0);
@@ -64,7 +64,7 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_task_run) {
   std::vector<std::pair<double, double>> borders(3);
   std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
-  std::vector<double (*)(double *)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_seq::test_func);
+  std::vector<double (*)(double *, int)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_seq::test_func);
 
   double ref = 32.0;
 
