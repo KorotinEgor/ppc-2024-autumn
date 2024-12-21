@@ -94,7 +94,7 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_mpi, monte_carlo_pseudo_rn
   std::vector<double> right_border(dimentions);
   std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
-  double (*lambda)(double*, int) = [](double* x, int x_size) -> double {
+  double (*lambda)(double *, int) = [](double *x, int x_size) -> double {
     double res = 0.0;
     for (int i = 0; i < x_size; i++) {
       res += x[i] * x[i];
