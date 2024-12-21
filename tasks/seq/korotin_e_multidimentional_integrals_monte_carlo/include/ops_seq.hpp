@@ -18,7 +18,6 @@ class TestTaskSequential : public ppc::core::Task {
   bool post_processing() override;
 
   double possible_error();
-  void set_func(double (*func)(double*));
 
  private:
   std::vector<std::pair<double, double>> input_;

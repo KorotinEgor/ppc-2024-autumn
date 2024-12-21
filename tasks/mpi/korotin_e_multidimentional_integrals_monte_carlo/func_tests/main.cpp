@@ -20,8 +20,12 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_monte_carlo) {
   std::vector<double> right_border(3);
   std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
+  std::vector<double (*)(double *)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_mpi::test_func);
 
   std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
+
+  taskDataPar->inputs.emplace_back(reinterpret_cast<uint8_t *>(F.data()));
+  taskDataPar->inputs_count.emplace_back(F.size());
 
   if (world.rank() == 0) {
     std::random_device rd;
@@ -42,7 +46,6 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_monte_carlo) {
   }
 
   korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
-  testMpiTaskParallel.set_func(korotin_e_multidimentional_integrals_monte_carlo_mpi::test_func);
   ASSERT_EQ(testMpiTaskParallel.validation(), true);
   testMpiTaskParallel.pre_processing();
   testMpiTaskParallel.run();
@@ -60,6 +63,9 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_monte_carlo) {
     }
 
     std::shared_ptr<ppc::core::TaskData> taskDataSeq = std::make_shared<ppc::core::TaskData>();
+    taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t *>(F.data()));
+    taskDataSeq->inputs_count.emplace_back(F.size());
+ 
     taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t *>(borders.data()));
     taskDataSeq->inputs_count.emplace_back(borders.size());
     taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t *>(N.data()));
@@ -68,7 +74,6 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo, test_monte_carlo) {
     taskDataSeq->outputs_count.emplace_back(ref.size());
 
     korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential testMpiTaskSequential(taskDataSeq);
-    testMpiTaskSequential.set_func(korotin_e_multidimentional_integrals_monte_carlo_mpi::test_func);
     ASSERT_EQ(testMpiTaskSequential.validation(), true);
     testMpiTaskSequential.pre_processing();
     testMpiTaskSequential.run();

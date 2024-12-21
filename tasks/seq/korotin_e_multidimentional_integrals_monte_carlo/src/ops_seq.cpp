@@ -10,10 +10,11 @@ using namespace std::chrono_literals;
 bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::pre_processing() {
   internal_order_test();
   // Init value for input and output
-  dim = taskData->inputs_count[0];
-  N = (reinterpret_cast<size_t*>(taskData->inputs[1]))[0];
+  dim = taskData->inputs_count[1];
+  N = (reinterpret_cast<size_t*>(taskData->inputs[2]))[0];
   input_ = std::vector<std::pair<double, double>>(dim);
-  auto* start = reinterpret_cast<std::pair<double, double>*>(taskData->inputs[0]);
+  auto* start = reinterpret_cast<std::pair<double, double>*>(taskData->inputs[1]);
+  f = (reinterpret_cast<double (**)(double *)>(taskData->inputs[0]))[0];
   std::copy(start, start + dim, input_.begin());
   // Init value for output
   res = 0.0;
@@ -22,14 +23,10 @@ bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::p
   return true;
 }
 
-void korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::set_func(double (*func)(double*)) {
-  f = func;
-}
-
 bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::validation() {
   internal_order_test();
   // Check count elements of output
-  return taskData->outputs_count[0] == 1 && taskData->inputs_count[1] == 1 && f != nullptr;
+  return taskData->outputs_count[0] == 1 && taskData->inputs_count[2] == 1 && taskData->inputs_count[0] == 1 ;
 }
 
 bool korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential::run() {

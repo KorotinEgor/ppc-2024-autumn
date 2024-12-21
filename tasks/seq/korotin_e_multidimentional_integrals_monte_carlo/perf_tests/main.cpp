@@ -16,12 +16,15 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_pipeline_run) {
   std::vector<std::pair<double, double>> borders(3);
   std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
+  std::vector<double (*)(double *)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_seq::test_func);
   double ref = 32.0;
 
   borders[0] = borders[1] = borders[2] = std::pair<double, double>(0.0, 2.0);
 
   // Create TaskData
   std::shared_ptr<ppc::core::TaskData> taskDataSeq = std::make_shared<ppc::core::TaskData>();
+  taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t *>(F.data()));
+  taskDataSeq->inputs_count.emplace_back(F.size()); 
   taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t *>(borders.data()));
   taskDataSeq->inputs_count.emplace_back(borders.size());
   taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t *>(N.data()));
@@ -32,7 +35,6 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_pipeline_run) {
   // Create Task
   auto testTaskSequential =
       std::make_shared<korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential>(taskDataSeq);
-  testTaskSequential->set_func(korotin_e_multidimentional_integrals_monte_carlo_seq::test_func);
 
   // Create Perf attributes
   auto perfAttr = std::make_shared<ppc::core::PerfAttr>();
@@ -62,12 +64,16 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_task_run) {
   std::vector<std::pair<double, double>> borders(3);
   std::vector<double> res(1, 0);
   std::vector<size_t> N(1, 500);
+  std::vector<double (*)(double *)> F(1, &korotin_e_multidimentional_integrals_monte_carlo_seq::test_func);
+
   double ref = 32.0;
 
   borders[0] = borders[1] = borders[2] = std::pair<double, double>(0.0, 2.0);
 
   // Create TaskData
   std::shared_ptr<ppc::core::TaskData> taskDataSeq = std::make_shared<ppc::core::TaskData>();
+  taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t *>(F.data()));
+  taskDataSeq->inputs_count.emplace_back(F.size());
   taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t *>(borders.data()));
   taskDataSeq->inputs_count.emplace_back(borders.size());
   taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t *>(N.data()));
@@ -78,7 +84,6 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_task_run) {
   // Create Task
   auto testTaskSequential =
       std::make_shared<korotin_e_multidimentional_integrals_monte_carlo_seq::TestTaskSequential>(taskDataSeq);
-  testTaskSequential->set_func(korotin_e_multidimentional_integrals_monte_carlo_seq::test_func);
 
   // Create Perf attributes
   auto perfAttr = std::make_shared<ppc::core::PerfAttr>();
@@ -101,6 +106,5 @@ TEST(korotin_e_multidimentional_integrals_monte_carlo_seq, test_task_run) {
   double err = testTaskSequential->possible_error();
   bool ans = (std::abs(res[0] - ref) < err);
 
-  std::cout << "right err = " << err << "\n";
   ASSERT_EQ(ans, true);
 }

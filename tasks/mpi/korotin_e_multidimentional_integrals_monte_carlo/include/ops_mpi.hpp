@@ -24,7 +24,6 @@ class TestMPITaskSequential : public ppc::core::Task {
   bool post_processing() override;
 
   double possible_error();
-  void set_func(double (*func)(double*));
 
  private:
   std::vector<std::pair<double, double>> input_;
@@ -46,7 +45,6 @@ class TestMPITaskParallel : public ppc::core::Task {
   bool post_processing() override;
 
   double possible_error();
-  void set_func(double (*func)(double*));
 
  private:
   std::vector<double> input_left_, input_right_;

@@ -13,11 +13,12 @@ using namespace std::chrono_literals;
 bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential::pre_processing() {
   internal_order_test();
   // Init value for input and output
-  dim = taskData->inputs_count[0];
-  N = (reinterpret_cast<size_t*>(taskData->inputs[1]))[0];
+  dim = taskData->inputs_count[1];
+  N = (reinterpret_cast<size_t*>(taskData->inputs[2]))[0];
   input_ = std::vector<std::pair<double, double>>(dim);
-  auto* start = reinterpret_cast<std::pair<double, double>*>(taskData->inputs[0]);
+  auto* start = reinterpret_cast<std::pair<double, double>*>(taskData->inputs[1]);
   std::copy(start, start + dim, input_.begin());
+  f = (reinterpret_cast<double (**)(double *)>(taskData->inputs[0]))[0];
   // Init value for output
   res = 0.0;
   M = 0.0;
@@ -25,14 +26,10 @@ bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential
   return true;
 }
 
-void korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential::set_func(double (*func)(double*)) {
-  f = func;
-}
-
 bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential::validation() {
   internal_order_test();
   // Check count elements of output
-  return taskData->outputs_count[0] == 1 && taskData->inputs_count[1] == 1 && f != nullptr;
+  return taskData->outputs_count[0] == 1 && taskData->inputs_count[0] == 1 && taskData->inputs_count[2] == 1;
 }
 
 bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequential::run() {
@@ -90,15 +87,16 @@ double korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskSequenti
 bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel::pre_processing() {
   internal_order_test();
   if (world.rank() == 0) {
-    dim = taskData->inputs_count[0];
-    N = (reinterpret_cast<size_t*>(taskData->inputs[2]))[0];
+    dim = taskData->inputs_count[1];
+    N = (reinterpret_cast<size_t*>(taskData->inputs[3]))[0];
     input_left_ = std::vector<double>(dim);
     input_right_ = std::vector<double>(dim);
-    auto* start1 = reinterpret_cast<double*>(taskData->inputs[0]);
-    auto* start2 = reinterpret_cast<double*>(taskData->inputs[1]);
+    auto* start1 = reinterpret_cast<double*>(taskData->inputs[1]);
+    auto* start2 = reinterpret_cast<double*>(taskData->inputs[2]);
     std::copy(start1, start1 + dim, input_left_.begin());
     std::copy(start2, start2 + dim, input_right_.begin());
   }
+  f = (reinterpret_cast<double (**)(double *)>(taskData->inputs[0])[0]);
   res = 0.0;
   M = 0.0;
   local_M = 0.0;
@@ -106,17 +104,13 @@ bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel::
   return true;
 }
 
-void korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel::set_func(double (*func)(double*)) {
-  f = func;
-}
-
 bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel::validation() {
   internal_order_test();
   if (world.rank() == 0) {
-    return taskData->outputs_count[0] == 1 && taskData->inputs_count[0] == taskData->inputs_count[1] &&
-           taskData->inputs_count[2] == 1 && f != nullptr;
+    return taskData->outputs_count[0] == 1 && taskData->inputs_count[1] == taskData->inputs_count[2] &&
+           taskData->inputs_count[3] == 1 && taskData->inputs_count[0] == 1; 
   }
-  return true;
+  return taskData->inputs_count[0] == 1;
 }
 
 bool korotin_e_multidimentional_integrals_monte_carlo_mpi::TestMPITaskParallel::run() {
